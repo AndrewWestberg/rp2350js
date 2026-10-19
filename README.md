@@ -97,6 +97,20 @@ Notes
 - Xh3irq [CSR write bypass](https://github.com/Wren6991/Hazard3/blob/787da131a1e982543d9b308c1c25a09160e71a65/hdl/hazard3_core.v#L921)
 - Hazard3 [rv_opcodes.vh](https://github.com/Wren6991/Hazard3/blob/stable/hdl/rv_opcodes.vh) and [hazard3_decode.v](https://github.com/Wren6991/Hazard3/blob/787da131a1e982543d9b308c1c25a09160e71a65/hdl/hazard3_decode.v#L305)
 
+## Local Cortex-M33 arithmetic correction
+
+This local branch fixes `SMLAL`/`UMLAL` accumulation using separate 32-bit words
+and carry propagation. Combining 64-bit products and accumulators into JavaScript
+numbers discarded low bits; for example, `0xffffffff * 0xffffffff + 1` incorrectly
+produced `0xfffffffe00000000` rather than `0xfffffffe00000002`.
+
+The Thumb-32 regression suite covers signed/unsigned products, low-word carry and
+64-bit wraparound. A Cortex-M33 build of the unchanged Cardano Sum6KES primitive
+now completes generation, evolution and signing across periods 31→32.
+This is instruction-level evidence, not hardware security qualification: the
+TRNG model is deterministic xorshift, OTP is simplified, and a strict unmodified
+factory-image boot probe stops on an unsupported PPB write at offset `0xed8c`.
+
 ## License
 
 - Released under the MIT licence.
